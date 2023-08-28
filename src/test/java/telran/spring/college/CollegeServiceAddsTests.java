@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import telran.spring.college.dto.MarkDto;
 import telran.spring.college.dto.PersonDto;
 import telran.spring.college.dto.SubjectDto;
+import telran.spring.college.dto.SubjectType;
 import telran.spring.college.entity.Lecturer;
 import telran.spring.college.entity.Student;
 import telran.spring.college.repository.*;
@@ -33,10 +34,10 @@ class CollegeServiceAddsTests {
 	PersonDto lecturerDto1 = new PersonDto(null, "Sara", "2000-01-01", null, null);
 	PersonDto studentDto = new PersonDto(ID_STUDENT, "Petya", LocalDate.now().toString(), null, null);
 	PersonDto studentDto1 = new PersonDto(null, "Yosef", "2000-01-01", null, null);
-	SubjectDto subjectDto = new SubjectDto("S1", "Java", 100, null);
-	SubjectDto sujectDto1 = new SubjectDto("S2", "Java", 100, ID_LECTURER);
-	SubjectDto sujectDto2 = new SubjectDto("S3", "Java", 100, ID_LECTURER + 10);
-	SubjectDto subjectDto3 = new SubjectDto("S1", "Java", 100, null);
+	SubjectDto subjectDto = new SubjectDto("S1", "Java", 100, null,SubjectType.BACK_END);
+	SubjectDto sujectDto1 = new SubjectDto("S2", "Java", 100, ID_LECTURER,SubjectType.BACK_END);
+	SubjectDto sujectDto2 = new SubjectDto("S3", "Java", 100, ID_LECTURER + 10,SubjectType.BACK_END);
+	SubjectDto subjectDto3 = new SubjectDto("S1", "Java", 100, null,SubjectType.BACK_END);
 		
 		@Test
 		@Order(1)

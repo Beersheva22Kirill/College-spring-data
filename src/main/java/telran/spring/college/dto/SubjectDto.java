@@ -11,5 +11,6 @@ public class SubjectDto {
 	String name;
 	int hours;
 	Long lecturerId;
+	SubjectType subjectType;
 
 }

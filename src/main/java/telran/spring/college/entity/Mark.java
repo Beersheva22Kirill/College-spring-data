@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import telran.spring.college.dto.MarkDto;
 
 @Entity
+@Table(name = "marks")
 @NoArgsConstructor
 public class Mark {
 	
