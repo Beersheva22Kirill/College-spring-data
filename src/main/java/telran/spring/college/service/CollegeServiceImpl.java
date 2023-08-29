@@ -171,16 +171,10 @@ public class CollegeServiceImpl implements CollegeService {
 		List<Student> students = studentRepo.findStudentsLessMark(nMarks);
 		
 		students.forEach(s -> {
-			if(nMarks > 1) {
-				List<Mark> marks = markRepo.findMarkByStudentId(s.getId());	
-				marks.forEach((m) -> {
-					markRepo.delete(m);
-					log.debug("Mark: {} of student:{} deleted",m.getMark(), s.getId());
-				});
-				
-			}
-			studentRepo.delete(s);
+			
 			log.debug("Student with id:{} is going to be deleted",s.getId());
+			studentRepo.delete(s);
+			
 		});
 		log.debug("{} students are going to be deleted",students.size());
 		return students.stream().map(Student :: build).toList();

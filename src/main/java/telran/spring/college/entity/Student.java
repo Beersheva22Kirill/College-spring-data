@@ -1,14 +1,16 @@
 package telran.spring.college.entity;
 
-import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 import telran.spring.college.dto.PersonDto;
 
 @Entity
-@NoArgsConstructor
 public class Student extends Person {
+	
+	public Student() {
+		
+	}
 
 	private Student(PersonDto person) {
 		super(person);
@@ -17,6 +19,13 @@ public class Student extends Person {
 	public static Student of(PersonDto person) {
 		
 		return new Student(person);
+	}
+	
+	@OneToMany(mappedBy = "student",cascade = CascadeType.REMOVE)
+	List<Mark> marks;
+
+	public List<Mark> getMarks() {
+		return marks;
 	}
 	
 }
