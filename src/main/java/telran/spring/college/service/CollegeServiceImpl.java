@@ -22,7 +22,7 @@ import telran.spring.exceptions.NotFoundException;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class CollegServiceImpl implements CollegeService {
+public class CollegeServiceImpl implements CollegeService {
 
 	final StudentRepository studentRepo;
 	final SubjectRepository subjectRepo;
@@ -125,6 +125,65 @@ public class CollegServiceImpl implements CollegeService {
 	public List<IdName> studentsAvgMarksGreaterCollegeAvg(int nMarksThreshold) {
 		
 		return studentRepo.findStudentsAvgMarksGreaterCollegeAvg(nMarksThreshold);
+	}
+
+	@Override
+	public List<AvgMark> studentsAvgMark() {
+		
+		return studentRepo.findStudentsAvgMark();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public SubjectDto updateHours(String subjectId, int hours) {
+		Subject subject = subjectRepo.findById(subjectId)
+				.orElseThrow(() -> new NotFoundException(String.format("Subject with id:%s not found", subjectId)));
+		subject.setHours(hours);
+		log.debug("Subject updated: hours - {}",subject.getHours());
+		return subject.build();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public SubjectDto updateLecturer(String subjectId, Long lecturerId) {
+		Subject subject = subjectRepo.findById(subjectId)
+				.orElseThrow(() -> new NotFoundException(String.format("Subject with id:%s not found", subjectId)));
+		if(lecturerId != null) {
+			Lecturer lecturer = lecturerRepo.findById(lecturerId)
+					.orElseThrow(() -> new NotFoundException(String.format("Lecturer with id:%d not found", lecturerId)));
+			subject.setLecturer(lecturer);
+			log.debug("Subject updated: id lecturer - {} ",lecturer.getId());
+		} else {
+			throw new IllegalArgumentException("Lecturer id is null");
+		}
+		return subject.build();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public List<PersonDto> removeStudentsNoMarks() {
+		return removeStudentLessMarks(1);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public List<PersonDto> removeStudentLessMarks(int nMarks) {
+		List<Student> students = studentRepo.findStudentsLessMark(nMarks);
+		
+		students.forEach(s -> {
+			if(nMarks > 1) {
+				List<Mark> marks = markRepo.findMarkByStudentId(s.getId());	
+				marks.forEach((m) -> {
+					markRepo.delete(m);
+					log.debug("Mark: {} of student:{} deleted",m.getMark(), s.getId());
+				});
+				
+			}
+			studentRepo.delete(s);
+			log.debug("Student with id:{} is going to be deleted",s.getId());
+		});
+		log.debug("{} students are going to be deleted",students.size());
+		return students.stream().map(Student :: build).toList();
 	}
 
 }

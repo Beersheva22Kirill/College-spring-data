@@ -13,7 +13,7 @@ import telran.spring.college.dto.*;
 import telran.spring.college.service.CollegeService;
 
 @SpringBootTest
-class CollegeReadTest {
+class CollegeServiceReadTest {
 	
 	@Autowired
 	CollegeService collegeService;
@@ -40,6 +40,20 @@ class CollegeReadTest {
 		assertEquals("Dmitri", actualList.get(1).getName());
 		assertEquals(127, actualList.get(2).getId());
 		assertEquals("David", actualList.get(2).getName());
+	}
+	
+	@Test
+	@Sql(scripts = {"college-read-test-script.sql"})
+	void studentsAvgMarksTest() {
+		List<AvgMark> actualList = collegeService.studentsAvgMark();
+		assertEquals(6, actualList.size());
+		
+		assertEquals(124,actualList.get(0).getId());
+		assertEquals("Kirill", actualList.get(0).getName());
+		assertEquals(95, actualList.get(0).getAvgMark());
+		assertEquals(128, actualList.get(5).getId());
+		assertEquals("Neuch", actualList.get(5).getName());
+		assertNull(actualList.get(5).getAvgMark());
 	}
 
 }

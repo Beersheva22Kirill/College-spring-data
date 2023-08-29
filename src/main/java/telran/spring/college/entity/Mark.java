@@ -31,6 +31,22 @@ public class Mark {
 		
 		return new MarkDto(id, student.id, subject.id, mark);	
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public Student getStudent() {
+		return student;
+	}
+
+	public Subject getSubject() {
+		return subject;
+	}
+
+	public int getMark() {
+		return mark;
+	}
 	
 	
 	
