@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 
+import org.hibernate.dialect.SybaseDriverKind;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,5 +57,24 @@ class CollegeServiceReadTest {
 		assertEquals("Neuch", actualList.get(5).getName());
 		assertNull(actualList.get(5).getAvgMark());
 	}
+	
+	@Test
+	void studentMarksBySubjectTest() {
+		List<MarkDto> marks = collegeService.marksOfStudentBySubject(124L, "S1");
+		assertEquals(100, marks.get(0).getMark());
+		assertEquals("S1", marks.get(0).getSubjectId());
+		
+	}
+	
+	@Test
+	void studentMarksGreaterTest() {
+		List<IdName> students = collegeService.studentsGreaterMarkBySubject(SubjectType.BACK_END, 89);
+		assertEquals(3, students.size());
+		assertEquals("Yuri", students.get(0).getName());
+		assertEquals("Kirill", students.get(1).getName());
+		assertEquals("Dmitri", students.get(2).getName());
+	}
+	
+	
 
 }

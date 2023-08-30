@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import telran.spring.college.entity.Mark;
+import telran.spring.college.entity.Student;
 
 public interface MarkRepository extends JpaRepository<Mark, Integer> {
 
@@ -15,5 +16,8 @@ public interface MarkRepository extends JpaRepository<Mark, Integer> {
 			+ "WHERE m.student_id = :studentId ", 
 			nativeQuery = true)
 	List<Mark> findMarkByStudentId(Long studentId);
+	
+	
+	List<Mark> findByStudentIdAndSubjectId(Long studentId, String subjectId);
 
 }

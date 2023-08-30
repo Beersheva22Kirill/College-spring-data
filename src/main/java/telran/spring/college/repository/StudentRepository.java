@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import telran.spring.college.dto.AvgMark;
 import telran.spring.college.dto.IdName;
+import telran.spring.college.dto.SubjectType;
 import telran.spring.college.entity.Mark;
 import telran.spring.college.entity.Student;
 
@@ -74,6 +75,11 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 		+ "HAVING COUNT(m.mark) < :nMarks) "
 		, nativeQuery = true)
 	void removeStudentsLessMark(int nMarks);
+	
+	List<IdName> findDistinctByMarksSubjectSubjectTypeAndMarksMarkGreaterThanOrderById(SubjectType type, int mark);
+	
+	
+	
 		
 	
 }
