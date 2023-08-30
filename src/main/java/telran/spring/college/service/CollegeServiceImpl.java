@@ -148,14 +148,15 @@ public class CollegeServiceImpl implements CollegeService {
 	public SubjectDto updateLecturer(String subjectId, Long lecturerId) {
 		Subject subject = subjectRepo.findById(subjectId)
 				.orElseThrow(() -> new NotFoundException(String.format("Subject with id:%s not found", subjectId)));
+		Lecturer lecturer = null;
 		if(lecturerId != null) {
-			Lecturer lecturer = lecturerRepo.findById(lecturerId)
+			lecturer = lecturerRepo.findById(lecturerId)
 					.orElseThrow(() -> new NotFoundException(String.format("Lecturer with id:%d not found", lecturerId)));
-			subject.setLecturer(lecturer);
-			log.debug("Subject updated: id lecturer - {} ",lecturer.getId());
-		} else {
-			throw new IllegalArgumentException("Lecturer id is null");
-		}
+		} 
+		
+		subject.setLecturer(lecturer);
+		log.debug("Subject updated: id lecturer - {} ",lecturer.getId());
+		
 		return subject.build();
 	}
 
@@ -169,12 +170,10 @@ public class CollegeServiceImpl implements CollegeService {
 	@Transactional(readOnly = false)
 	public List<PersonDto> removeStudentLessMarks(int nMarks) {
 		List<Student> students = studentRepo.findStudentsLessMark(nMarks);
-		
-		students.forEach(s -> {
-			
+
+		students.forEach(s -> {	
 			log.debug("Student with id:{} is going to be deleted",s.getId());
-			studentRepo.delete(s);
-			
+			studentRepo.delete(s);	
 		});
 		log.debug("{} students are going to be deleted",students.size());
 		return students.stream().map(Student :: build).toList();

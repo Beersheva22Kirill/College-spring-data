@@ -13,7 +13,6 @@ import telran.spring.college.entity.Student;
 public interface StudentRepository extends JpaRepository<Student, Long> {
 	
 	
-	
 	@Query(value = "SELECT "
 			+ "sl.id as id, "
 			+ "sl.name as name "

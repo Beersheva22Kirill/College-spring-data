@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import telran.spring.college.dto.*;
+import telran.spring.college.entity.Student;
 import telran.spring.college.service.CollegeService;
 
 @SpringBootTest
