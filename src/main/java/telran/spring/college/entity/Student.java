@@ -25,6 +25,7 @@ public class Student extends Person {
 	List<Mark> marks;
 
 	public List<Mark> getMarks() {
+		
 		return marks;
 	}
 	
