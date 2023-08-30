@@ -3,6 +3,7 @@ package telran.spring.college.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import telran.spring.college.dto.AvgMark;
@@ -51,8 +52,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	List<AvgMark> findStudentsAvgMark();
 
 
-	
-	
 	@Query(value = 	"SELECT "
 			+ "* "
 			+ "FROM students_lecturers "
@@ -64,5 +63,17 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 			+ "HAVING COUNT(m.mark) < :nMarks) "
 			, nativeQuery = true)
 	List<Student> findStudentsLessMark(int nMarks);
+
+	@Modifying
+	@Query(value = "DELETE FROM students_lecturers "
+		+ "WHERE dType = 'Student' AND id in ("
+		+ "SELECT sl.id "
+		+ "FROM students_lecturers sl "
+		+ "LEFT JOIN marks m ON m.student_id = sl.id "
+		+ "GROUP BY sl.id "
+		+ "HAVING COUNT(m.mark) < :nMarks) "
+		, nativeQuery = true)
+	void removeStudentsLessMark(int nMarks);
+		
 	
 }

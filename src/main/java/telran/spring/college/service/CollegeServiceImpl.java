@@ -170,12 +170,8 @@ public class CollegeServiceImpl implements CollegeService {
 	@Transactional(readOnly = false)
 	public List<PersonDto> removeStudentLessMarks(int nMarks) {
 		List<Student> students = studentRepo.findStudentsLessMark(nMarks);
-
-		students.forEach(s -> {	
-			log.debug("Student with id:{} is going to be deleted",s.getId());
-			studentRepo.delete(s);	
-		});
-		log.debug("{} students are going to be deleted",students.size());
+		studentRepo.removeStudentsLessMark(nMarks);
+		
 		return students.stream().map(Student :: build).toList();
 	}
 
