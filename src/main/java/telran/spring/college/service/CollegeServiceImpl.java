@@ -1,5 +1,7 @@
 package telran.spring.college.service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -9,6 +11,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import telran.spring.college.dto.*;
@@ -25,6 +29,7 @@ import telran.spring.exceptions.NotFoundException;
 @Transactional(readOnly = true)
 public class CollegeServiceImpl implements CollegeService {
 
+	final EntityManager entityManager;
 	final StudentRepository studentRepo;
 	final SubjectRepository subjectRepo;
 	final LecturerRepository lecturerRepo;
@@ -198,6 +203,28 @@ public class CollegeServiceImpl implements CollegeService {
 			
 			lecturerRepo.deleteById(lecturer.getId());
 		return lecturer.build();
+	}
+
+	@Override
+	public List<String> jpqlQuery(String queryStr) {
+		Query query = entityManager.createQuery(queryStr);
+		List<?> resultList = query.getResultList();
+		List<String> result = Collections.emptyList();
+		if (!resultList.isEmpty()) {
+			result = resultList.get(0).getClass().isArray() ? processMultiProjectionQuery((List<Object[]>) resultList) : processSinglProjectionQuery((List<Object>) resultList);
+		}
+		
+		return result;
+	}
+
+	private List<String> processSinglProjectionQuery(List<Object> resultList) {
+		
+		return resultList.stream().map(Object :: toString).toList();
+	}
+
+	private List<String> processMultiProjectionQuery(List<Object[]> resultList) {
+		
+		return resultList.stream().map(Arrays :: deepToString).toList();
 	}
 
 

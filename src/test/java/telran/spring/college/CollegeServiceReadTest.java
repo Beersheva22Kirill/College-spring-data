@@ -3,6 +3,8 @@ package telran.spring.college;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +108,24 @@ class CollegeServiceReadTest {
 		Subject subject = subjectRepo.findById("S3").orElse(null);
 		assertEquals(322, subject.getLecturer().getId());
 		assertThrows(Exception.class, () -> subject.getLecturer().getName());	
+	}
+	
+	@Test
+	void jpqlSingleProjectionTest() {
+		String strQuery = "SELECT lect.id FROM Lecturer lect ORDER BY lect.id";
+		List<String> res = collegeService.jpqlQuery(strQuery);
+		assertEquals(3, res.size());
+		String[] expected = {"321","322","323"};
+		assertArrayEquals(expected, res.toArray(String[] :: new));
+	}
+	
+	@Test
+	void jpqlMultiProjectionTest() {
+		String strQuery = "SELECT lect.id, lect.name FROM Lecturer lect ORDER BY lect.id";
+		List<String> res = collegeService.jpqlQuery(strQuery);
+		assertEquals(3, res.size());
+		String[] expected = {"[321, Igor Korol]","[322, Andrey Sobol]","[323, Yana Polay]"};
+		assertArrayEquals(expected, res.toArray(String[] :: new));
 	}
 	
 	
