@@ -29,18 +29,18 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	List<IdName> findBestStudentsOfLecturer(long lecturerId, int nStudents);
 	
 	
-	@Query(value = "SELECT "
-			+ "sl.id as id,"
-			+ "sl.name as name " 
-			+ "FROM (SELECT * FROM students_lecturers WHERE dType = 'Student') sl "
-			+ "JOIN marks m ON m.student_id = sl.id " 
-			+ "GROUP BY sl.id, sl.name "
-			+ "HAVING COUNT(m.mark) > :nMarksThreshold "
-			+ "AND AVG(m.mark) > (SELECT AVG(mark) FROM marks) " 
-			+ "ORDER BY AVG(m.mark) desc ", 
-			nativeQuery = true)
+	@Query("SELECT "
+			+ "student.id as id, "
+			+ "student.name as name "
+			+ "FROM Mark "
+			+ "GROUP BY student.id, student.name "
+			+ "HAVING COUNT(mark) > :nMarksThreshold AND AVG(mark) > ("
+			+ "SELECT "
+			+ "AVG(mark) as avg_mark "
+			+ "FROM Mark) "
+			+ "ORDER BY AVG(mark) desc ")
 	List<IdName> findStudentsAvgMarksGreaterCollegeAvg(int nMarksThreshold);
-	
+
 	@Query(value = "SELECT "
 			+ "sl.id as id,"
 			+ "sl.name as name,"
@@ -48,32 +48,14 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 			+ "FROM (SELECT * FROM students_lecturers WHERE dType = 'Student') sl "
 			+ "LEFT JOIN marks m ON m.student_id = sl.id " 
 			+ "GROUP BY sl.id, sl.name " 
-			+ "ORDER BY AVG(m.mark) desc "
-			, nativeQuery = true)
+			+ "ORDER BY AVG(m.mark) desc ", nativeQuery = true)
 	List<AvgMark> findStudentsAvgMark();
 
-
-	@Query(value = 	"SELECT "
-			+ "* "
-			+ "FROM students_lecturers "
-			+ "WHERE dType = 'Student' AND id in ("
-			+ "SELECT sl.id "
-			+ "FROM students_lecturers sl "
-			+ "LEFT JOIN marks m ON m.student_id = sl.id "
-			+ "GROUP BY sl.id "
-			+ "HAVING COUNT(m.mark) < :nMarks) "
-			, nativeQuery = true)
+	@Query("SELECT s FROM Student s WHERE size(marks) < :nMarks")
 	List<Student> findStudentsLessMark(int nMarks);
-
+	
 	@Modifying
-	@Query(value = "DELETE FROM students_lecturers "
-		+ "WHERE dType = 'Student' AND id in ("
-		+ "SELECT sl.id "
-		+ "FROM students_lecturers sl "
-		+ "LEFT JOIN marks m ON m.student_id = sl.id "
-		+ "GROUP BY sl.id "
-		+ "HAVING COUNT(m.mark) < :nMarks) "
-		, nativeQuery = true)
+	@Query("DELETE FROM Student WHERE size(marks) < :nMarks ")
 	void removeStudentsLessMark(int nMarks);
 	
 	List<IdName> findDistinctByMarksSubjectSubjectTypeAndMarksMarkGreaterThanOrderById(SubjectType type, int mark);
