@@ -4,24 +4,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 
-import org.hibernate.dialect.SybaseDriverKind;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import telran.spring.college.dto.*;
 import telran.spring.college.entity.Student;
+import telran.spring.college.entity.Subject;
+import telran.spring.college.repository.StudentRepository;
+import telran.spring.college.repository.SubjectRepository;
 import telran.spring.college.service.CollegeService;
 
 @SpringBootTest
+@Sql(scripts = {"college-read-test-script.sql"})
 class CollegeServiceReadTest {
 	
 	@Autowired
 	CollegeService collegeService;
+	@Autowired
+	SubjectRepository subjectRepo;
+	@Autowired
+	StudentRepository studentRepo;
 
 	@Test
-	@Sql(scripts = {"college-read-test-script.sql"})
 	void bestStudentsOfLectirerTest() {
 		List<IdName> actualList = collegeService.bestStudentsOfLecturer(321, 2);
 		assertEquals(2, actualList.size());
@@ -32,7 +39,6 @@ class CollegeServiceReadTest {
 	}
 	
 	@Test
-	@Sql(scripts = {"college-read-test-script.sql"})
 	void studentsAvgMarksGreaterCollegeAvgTest() {
 		List<IdName> actualList = collegeService.studentsAvgMarksGreaterCollegeAvg(2);
 		assertEquals(3, actualList.size());
@@ -44,8 +50,7 @@ class CollegeServiceReadTest {
 		assertEquals("David", actualList.get(2).getName());
 	}
 	
-	@Test
-	@Sql(scripts = {"college-read-test-script.sql"})
+	@Test	
 	void studentsAvgMarksTest() {
 		List<AvgMark> actualList = collegeService.studentsAvgMark();
 		assertEquals(6, actualList.size());
@@ -73,6 +78,34 @@ class CollegeServiceReadTest {
 		assertEquals("Yuri", students.get(0).getName());
 		assertEquals("Kirill", students.get(1).getName());
 		assertEquals("Dmitri", students.get(2).getName());
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
+	void fethLecturerTest() {
+		Subject subject = subjectRepo.findById("S3").orElse(null);
+		assertEquals(322, subject.getLecturer().getId());
+		assertEquals("Andrey Sobol", subject.getLecturer().getName());
+	}
+	
+	@Test
+	@Transactional(readOnly = true)
+	void fethMarksTest() {
+		Student student = studentRepo.findById(124L).orElse(null);
+		assertEquals(4, student.getMarks().size());
+	}
+	
+	@Test
+	void fethLecturerLazyNoTransactionalTest() {
+		Student student = studentRepo.findById(124L).orElse(null);
+		assertThrows(Exception.class, () -> student.getMarks().size());	
+	}
+	
+	@Test
+	void fethMarksLazyNoTransactionalTest() {
+		Subject subject = subjectRepo.findById("S3").orElse(null);
+		assertEquals(322, subject.getLecturer().getId());
+		assertThrows(Exception.class, () -> subject.getLecturer().getName());	
 	}
 	
 	

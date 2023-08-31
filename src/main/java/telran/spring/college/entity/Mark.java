@@ -1,5 +1,8 @@
 package telran.spring.college.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import telran.spring.college.dto.MarkDto;
@@ -14,6 +17,7 @@ public class Mark {
 	int id;
 	@ManyToOne
 	@JoinColumn(name = "student_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	Student student;
 	@ManyToOne
 	@JoinColumn(name = "subject_id", nullable = false)

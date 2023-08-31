@@ -24,8 +24,7 @@ public class Student extends Person {
 		return new Student(person);
 	}
 	
-	@OneToMany(mappedBy = "student")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
 	List<Mark> marks;
 
 	public List<Mark> getMarks() {

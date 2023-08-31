@@ -16,8 +16,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import telran.spring.college.dto.PersonDto;
+import telran.spring.college.entity.Lecturer;
 import telran.spring.college.entity.Student;
 import telran.spring.college.entity.Subject;
+import telran.spring.college.repository.LecturerRepository;
 import telran.spring.college.repository.MarkRepository;
 import telran.spring.college.repository.StudentRepository;
 import telran.spring.college.repository.SubjectRepository;
@@ -34,6 +36,8 @@ class CollegeServiceUpdateDeleteTests {
 	static final int HOURS = 200;
 	private static final Long STUDENT_NO_MARKS_ID = 128l;
 	private static final Long STUDENT_REMOVED_ID_0 = 123l;
+	private static final Long LECTURER_REMOVE_ID = 322L;
+	private static final String SUBJECT_NULL_LECTURER_ID = "S3";
 	
 	
 	@Autowired
@@ -44,6 +48,8 @@ class CollegeServiceUpdateDeleteTests {
 	StudentRepository studentRepo;
 	@Autowired
 	MarkRepository markRepo;
+	@Autowired
+	LecturerRepository lecturerRepo;
 	
 
 	@Test
@@ -109,6 +115,17 @@ class CollegeServiceUpdateDeleteTests {
 	void removeStudentLessMarksTest() {
 		assertNull(studentRepo.findById(STUDENT_REMOVED_ID_0).orElse(null));
 		assertEquals(0,markRepo.findMarkByStudentId(123l).size());
+	}
+	
+	@Test
+	@Order(9)
+	@Sql(scripts = {"college-read-test-script.sql"})
+	void removeLecturerTest() {
+		collegeService.removeLecturer(LECTURER_REMOVE_ID);
+		Lecturer expLecturer = lecturerRepo.findById(LECTURER_REMOVE_ID).orElse(null); 
+		assertNull(expLecturer);
+		Subject expSubject = subjectRepo.findById(SUBJECT_NULL_LECTURER_ID).orElse(null);
+		assertNull(expSubject.getLecturer());
 	}
 		
 

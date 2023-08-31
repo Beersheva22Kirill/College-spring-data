@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -152,7 +153,9 @@ public class CollegeServiceImpl implements CollegeService {
 		if(lecturerId != null) {
 			lecturer = lecturerRepo.findById(lecturerId)
 					.orElseThrow(() -> new NotFoundException(String.format("Lecturer with id:%d not found", lecturerId)));
-		} 
+		} else {
+			throw new IllegalArgumentException("Lecturer id is null");
+		}
 		
 		subject.setLecturer(lecturer);
 		log.debug("Subject updated: id lecturer - {} ",lecturer.getId());
@@ -185,6 +188,16 @@ public class CollegeServiceImpl implements CollegeService {
 	public List<IdName> studentsGreaterMarkBySubject(SubjectType type, int mark) {
 		List<IdName> students = studentRepo.findDistinctByMarksSubjectSubjectTypeAndMarksMarkGreaterThanOrderById(type, 89);
 		return students;
+	}
+
+	@Override
+	@Transactional
+	public PersonDto removeLecturer(long lecturerId) {
+			Lecturer lecturer = lecturerRepo.findById(lecturerId)
+					.orElseThrow(() -> new NotFoundException(String.format("Lecturer with id:{} not found", lecturerId)));
+			
+			lecturerRepo.deleteById(lecturer.getId());
+		return lecturer.build();
 	}
 
 

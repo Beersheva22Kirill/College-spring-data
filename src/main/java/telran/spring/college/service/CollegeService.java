@@ -26,4 +26,5 @@ public interface CollegeService {
 	List<PersonDto> removeStudentLessMarks(int nMarks);
 	List<MarkDto> marksOfStudentBySubject(Long studentId,String subjectId); 
 	List<IdName> studentsGreaterMarkBySubject(SubjectType type, int mark);
+	PersonDto removeLecturer(long lecturerId);
 }
