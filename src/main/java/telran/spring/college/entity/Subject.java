@@ -30,7 +30,7 @@ public class Subject {
 	SubjectType subjectType;
 	
 	public SubjectDto build() {
-		return new SubjectDto(id, name, hours, lecturer == null ? null : lecturer.id, subjectType);
+		return new SubjectDto(id, name, hours, lecturer == null ? null : lecturer.getId(), subjectType);
 	}
 	
 	public static Subject of(SubjectDto subject) {

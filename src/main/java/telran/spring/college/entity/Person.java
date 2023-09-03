@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import telran.spring.college.dto.PersonDto;
 
@@ -14,6 +15,7 @@ import telran.spring.college.dto.PersonDto;
 @Table(name = "students_lecturers")
 public abstract class Person {
 	@Id
+	@Getter
 	Long id;
 	String name;
 	@Column(name = "birth_date")

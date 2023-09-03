@@ -213,7 +213,6 @@ public class CollegeServiceImpl implements CollegeService {
 		if (!resultList.isEmpty()) {
 			result = resultList.get(0).getClass().isArray() ? processMultiProjectionQuery((List<Object[]>) resultList) : processSinglProjectionQuery((List<Object>) resultList);
 		}
-		
 		return result;
 	}
 
